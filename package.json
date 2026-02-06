@@ -1,0 +1,1 @@
+{"name":"nothing-prayer-app","version":"1.0.0","description":"تطبيق أوقات الصلاة بتصميم Nothing Phone","main":"index.html","scripts":{"android":"npx cap sync && npx cap open android","build":"npx cap sync"},"keywords":["prayer","nothing","islamic"],"author":"","license":"MIT","dependencies":{"@capacitor/android":"^5.5.1","@capacitor/core":"^5.5.1","@capacitor/cli":"^5.5.1"}}
