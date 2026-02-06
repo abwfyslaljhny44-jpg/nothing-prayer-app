@@ -1,0 +1,1 @@
+{"appId":"com.nothingprayer.app","appName":"Nothing Prayer","webDir":"www","bundledWebRuntime":false,"android":{"allowMixedContent":true,"useLegacyBridge":false},"plugins":{"SplashScreen":{"launchShowDuration":2000,"backgroundColor":"#000000"}}}
