@@ -1,5 +1,15 @@
 let timings = {};
 let nextPrayerTime = null;
+let countdownInterval = null;
+
+const prayerNames = {
+  Fajr: "الفجر",
+  Sunrise: "الشروق",
+  Dhuhr: "الظهر",
+  Asr: "العصر",
+  Maghrib: "المغرب",
+  Isha: "ا��عشاء"
+};
 
 async function getPrayerTimes(lat, lon) {
   const res = await fetch(
@@ -20,28 +30,30 @@ function getNextPrayer(t) {
     d.setHours(h, m, 0);
 
     if (d > now) {
-      return { name, time, date: d };
+      return { key: name, name: prayerNames[name], time, date: d };
     }
   }
 
-  // إذا خلص اليوم
+  // الفجر لليوم التالي
   const fajr = t["Fajr"].split(":");
   const d = new Date();
   d.setDate(d.getDate() + 1);
   d.setHours(fajr[0], fajr[1], 0);
 
-  return { name: "Fajr", time: t["Fajr"], date: d };
+  return { key: "Fajr", name: "الفجر", time: t["Fajr"], date: d };
 }
 
 function startCountdown() {
-  setInterval(() => {
+  if (countdownInterval) clearInterval(countdownInterval);
+
+  countdownInterval = setInterval(() => {
     if (!nextPrayerTime) return;
 
     const now = new Date();
     const diff = nextPrayerTime - now;
 
     if (diff <= 0) {
-      document.getElementById("countdown").innerText = "دخل الوقت";
+      document.getElementById("countdown").innerText = "🔔 دخل وقت الصلاة";
       return;
     }
 
@@ -50,15 +62,20 @@ function startCountdown() {
     const s = Math.floor((diff % 60000) / 1000);
 
     document.getElementById("countdown").innerText =
-      `${h}س ${m}د ${s}ث`;
+      `${h} ساعة ${m} دقيقة ${s} ثانية`;
   }, 1000);
 }
 
-function buildTable(t) {
+function buildTable(t, nextKey) {
   let html = "<table>";
+
   for (const [name, time] of Object.entries(t)) {
-    html += `<tr><td>${name}</td><td>${time}</td></tr>`;
+    const arabic = prayerNames[name] || name;
+    const highlight = name === nextKey ? "style='color:#00ffcc'" : "";
+
+    html += `<tr ${highlight}><td>${arabic}</td><td>${time}</td></tr>`;
   }
+
   html += "</table>";
   document.getElementById("table").innerHTML = html;
 }
@@ -71,7 +88,7 @@ async function init() {
     const data = await getPrayerTimes(lat, lon);
 
     document.getElementById("city").innerText =
-      data.meta.timezone;
+      "📍 " + data.meta.timezone;
 
     timings = data.timings;
 
@@ -82,8 +99,11 @@ async function init() {
 
     nextPrayerTime = next.date;
 
-    buildTable(timings);
+    buildTable(timings, next.key);
     startCountdown();
+
+    // تخزين لليوم
+    localStorage.setItem("timings", JSON.stringify(timings));
   });
 }
 
