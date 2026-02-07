@@ -1,0 +1,28 @@
+body {
+  margin: 0;
+  font-family: sans-serif;
+  background: black;
+  color: white;
+  text-align: center;
+}
+
+.container {
+  padding: 20px;
+}
+
+.next {
+  margin: 20px 0;
+  padding: 20px;
+  border: 1px solid #333;
+  border-radius: 12px;
+}
+
+table {
+  width: 100%;
+  margin-top: 20px;
+}
+
+td {
+  padding: 8px;
+  border-bottom: 1px solid #222;
+}
